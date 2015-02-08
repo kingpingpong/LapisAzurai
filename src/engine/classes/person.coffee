@@ -3,7 +3,7 @@
 lastP = null
 window.q = (person = lastP)->
   lastP = person
-  return "<q style='color: #{person.text or '#FFF'}' title='#{person}'>"
+  return "<q style='color: #{person.text or '#FFF'}'>"
 q.toString = q
 
 # Minor linguistic note - events have to be written in the male form in code because his->her, him->her are impossible to tell apart from the feminine side.
@@ -26,7 +26,7 @@ statSchema = {type: 'number', gte: 0, lte: 100}
 
 window.Person = class Person extends GameObject
   @stats:
-    happiness: "Happiness<br>How content a person is serving on the Lapis Azurai."
+    happiness: "Happiness<br>How content a person is serving on the Lapis Azurai. As long as it's above 20 you're fine."
     business: "Business<br>Knowledge of goods, prices, book keeping and other parts of making a profit."
     diplomacy: "Diplomacy<br>Charm, wit or intimidation factor, whatever makes someone want to agree to a deal."
     sailing: "Sailing<br>Ships, sails, winds and waves, the knowledge and experience of dealing with the ocean."

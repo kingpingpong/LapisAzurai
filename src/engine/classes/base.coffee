@@ -29,7 +29,7 @@ window.GameObject = class GameObject
 
   valid: ->
     level = @constructor
-    while !level.schema
+    while not level.schema
       level = level.__super__?.constructor
 
     result = SchemaInspector.validate level.schema, @
@@ -222,12 +222,21 @@ window.Collection = class Collection
         index++
       delete @[index]
 
+  Object.defineProperty @::, 'reArray',
+    value: (index)->
+      values = []
+      for key in Object.keys(@)
+        values.push @[key]
+        delete @[key]
+      $.extend @, values
+
   Object.defineProperty @::, 'length',
     get: ->
       index = 0
       while @[index]
         index++
       return index
+
   Object.defineProperty @::, 'objectLength',
     get: ->Object.keys(@).length
 
@@ -237,3 +246,9 @@ window.Collection = class Collection
       for key, value of @
         if compare(value) then results[key] = value
       return results
+
+  Object.defineProperty @::, 'indexOf',
+    value: (item)->
+      for key, value of @
+        if value is item then return key
+      return -1

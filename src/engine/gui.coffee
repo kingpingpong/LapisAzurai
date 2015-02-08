@@ -33,6 +33,7 @@ isPage = (funct)-> funct?.prototype instanceof Page
 
 # Returns the next div after the currently active one, or generates events / passes time until there is one.
 getNextDiv = ->
+  $('#content .tooltip').remove()
   currentPage = $('page.active').data('page')
 
   until $('page.active + page').length
@@ -71,9 +72,8 @@ setNav = ->
   element = $('page.active')
   element.toggleClass 'no-prev', not element.prev().length
 
-$.fn?.tooltip.Constructor.DEFAULTS.container = 'body'
+$.fn?.tooltip.Constructor.DEFAULTS.container = 'page.active'
 $.fn?.tooltip.Constructor.DEFAULTS.html = true
-$.fn?.tooltip.Constructor.DEFAULTS.viewport = '#content'
 $.fn?.tooltip.Constructor.DEFAULTS.trigger = 'hover click'
 
 $.fn?.addTooltips = ->
@@ -83,9 +83,13 @@ $.fn?.addTooltips = ->
       placement: 'auto left'
       title: description
     }
-  $('[title]', @).tooltip {
+  $('[title]', @).not('button').tooltip {
     delay: {show: 300, hide: 100}
     placement: 'bottom'
+  }
+  $('button[title]', @).tooltip {
+    delay: {show: 300, hide: 100}
+    placement: 'top'
   }
 
   $('.person-info, .location', @).dblclick ->
@@ -93,6 +97,7 @@ $.fn?.addTooltips = ->
   $('div.full', @).tooltip(
     title: 'Double click to sticky or hide this'
     placement: 'bottom'
+    container: 'page.active'
   )
 
 errorPage = (page, error)->
@@ -116,14 +121,9 @@ $ ->
     placement: 'bottom'
   )
 
-  centerNav = ->
-    height = window.innerHeight + $('.navbar').outerHeight() * 2
-    top = height - $('#nav-arrows').outerHeight()
-    $('#nav-arrows').css 'top', top / 2
-
   $(window).resize ->
-    c.css 'height', window.innerHeight - $('.navbar').outerHeight()
-    centerNav()
+    c.css 'height', Math.min(window.innerHeight - $('.navbar').outerHeight(), 800)
+    $('body').css 'height', window.innerHeight
   setTimeout -> $(window).resize()
 
   considerGoto = (upDown)->
@@ -158,9 +158,6 @@ $ ->
       if $(@).hasClass 'active'
         Game.gotoPage(1)
     , parseInt($(@).attr('auto'), 10)
-
-  c.css 'height', window.innerHeight - $('.navbar').outerHeight()
-  centerNav()
 
   c.on 'click', 'button.dropdown-toggle', ->
     position = $(@).toggleClass('active').position()
@@ -203,7 +200,7 @@ $ ->
     (new Page.Load).show()
     gotoPage()
 
-  last = Object.keys(localStorage).sort().pop()
+  last = Object.keys(localStorage).map((key) -> parseFloat(key) or 0).sort().pop()
   if last
     window.g = new Game jsyaml.safeLoad(localStorage[last])
     g.last.show()

@@ -81,10 +81,17 @@ window.Game = class Game extends GameObject
     element = $ '.nav'
     $('.day', element).html @day
     $('.money', element).html @officers.Nat.money
-    wages = Math.sum(person.wages() for name, person of @officers)
+    wages = Math.sum((person.wages() for name, person of @officers))
     wages += Math.sum(person.wages() for name, person of @crew)
     $('.wages', element).html wages
     $('.progress-bar', element).css 'width', (Math.sumObject(g.cargo) * 100 / Game.cargo) + "%"
+    cargo = Object.keys(g.cargo).map (item)->"<tr><td>#{g.cargo[item]}</td><td>#{item}</td></tr>"
+    $('.cargo').tooltip('destroy').tooltip {
+      placement: 'bottom'
+      title: "<table class='table table-striped'>#{cargo.join "\n"}</table>"
+      html: true
+      template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner no-pad"></div></div>'
+    }
     $('#game-info img').attr 'src', @location.images[if @weather is 'calm' then 'day' else 'storm']
     $('#game-info .description').html @location.description?() or @location.description
 
@@ -125,16 +132,25 @@ window.Game = class Game extends GameObject
             @getItem(parts.join '|')[property] = false
 
     if effects.cargo
+      adding = {}
       for key, value of effects.cargo
         if typeof value is 'string'
           value = context[value]
 
-        val = g.cargo[key] or 0
-        val += value
-        if val > 0
-          g.cargo[key] = val
+        # Wait to add new cargo until we've removed everything (so we know we have space left)
+        if value > 0
+          positive[key] = value
         else
-          delete g.cargo[key]
+          g.cargo[key] += value
+          unless g.cargo[key] > 0 then delete g.cargo[key]
+
+      space = Game.cargo - Math.sumObject(g.cargo)
+      for key, value of adding
+        unless space then break
+        g.cargo[key] or= 0
+        g.cargo[key] += Math.min(space, value)
+        space -= Math.min(space, value)
+
     if effects.money
       g.officers.Nat.money += effects.money[0]
       g.money.push {amount: effects.money[0], reason: effects.money[1], day: g.day}

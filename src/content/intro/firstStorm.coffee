@@ -241,9 +241,13 @@ Page.IntroSickNat::next = Page.IntroSickNat2 = class IntroSickNat2 extends Page
     <text><p>He cupped his face in both hands and rubbed his eyes. It was an answer to far too many questions, but it raised more questions still. First among them, why hadn't she told him? They'd been friends since he was old enough to walk.</p></text>
   </page>
   <page>
+<<<<<<< HEAD
 #	I changed "didn't" to "doesn't" for the reason that "didn't" implies that James was talking about Natalie's magic (i.e. "Her magic didn't manifest until puberty") while "doesn't" more implies that James was talking about how magic works in general (i.e. "This does that" over "This did that". The first one makes more sense).
     <text continue-inline> Magic doesn't manifest until puberty. They'd have been best friends for a decade when she learned what she was.</text>
 #	Should "They'd have been best friends..." change? I feel like it would make more sense if "They'd" was not contracted, as it could mean either "They had" or "They would". Possible change: "They would have been best friends..."
+=======
+    <text continue-inline> Magic never manifested until puberty. They would have been best friends for a decade when she learned what she was.</text>
+>>>>>>> upstream/master
   </page>
   <page>
     <text continue><p>It was a rare gift. One in ten thousand had a spark of magic, enough to light a candle.</p></text>
